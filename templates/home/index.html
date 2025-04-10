@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calendar</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .calendar-container { padding: 40px 20px; }
+    .calendar-grid div { min-height: 100px; padding: 5px; border: 1px solid #dee2e6; background: #fff; }
+    .today { background-color: #cfe2ff !important; }
+    .not-current-month { color: #ccc; }
+    footer { background-color: #343a40; color: #fff; padding: 10px 0; margin-top: 40px; text-align: center; }
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        background-color: #dee2e6;
+    }
+    .day-name {
+        background-color: #198754 !important;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        min-height: 40px !important;
+        line-height: 40px;
+        border: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">CalendarApp</a>
+  </div>
+</nav>
+
+<!-- Calendar -->
+<div class="container-fluid calendar-container">
+  <div class="calendar-header d-flex flex-wrap justify-content-center align-items-center gap-2 mb-4">
+    <button id="prevBtn" class="btn btn-outline-primary">← Previous</button>
+
+    <select id="monthSelect" class="form-select w-auto"></select>
+    <select id="yearSelect" class="form-select w-auto"></select>
+
+    <button id="nextBtn" class="btn btn-outline-primary">Next →</button>
+
+    <h2 id="monthYear" class="w-100 text-center mt-2 mb-0"></h2>
+  </div>
+
+  <div class="calendar-grid text-center mb-1">
+    <div class="day-name">Sun</div>
+    <div class="day-name">Mon</div>
+    <div class="day-name">Tue</div>
+    <div class="day-name">Wed</div>
+    <div class="day-name">Thu</div>
+    <div class="day-name">Fri</div>
+    <div class="day-name">Sat</div>
+  </div>
+
+  <div class="calendar-grid" id="calendarDays"></div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p class="mb-0" id="footerYear">&copy; CalendarApp. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Script -->
+<script>
+  const calendarDays = document.getElementById("calendarDays");
+  const monthYear = document.getElementById("monthYear");
+  const footerYear = document.getElementById("footerYear");
+  const monthSelect = document.getElementById("monthSelect");
+  const yearSelect = document.getElementById("yearSelect");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  const today = new Date();
+  let currentMonth = today.getMonth();
+  let currentYear = today.getFullYear();
+
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+                      "July", "August", "September", "October", "November", "December"];
+
+  function populateDropdowns() {
+    monthSelect.innerHTML = "";
+    yearSelect.innerHTML = "";
+    monthNames.forEach((name, index) => {
+      const option = new Option(name, index);
+      monthSelect.appendChild(option);
+    });
+
+    for (let y = currentYear - 20; y <= currentYear + 20; y++) {
+      const option = new Option(y, y);
+      yearSelect.appendChild(option);
+    }
+
+    monthSelect.value = currentMonth;
+    yearSelect.value = currentYear;
+  }
+
+  function renderCalendar(month, year) {
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+    calendarDays.innerHTML = "";
+    monthYear.innerText = `${monthNames[month]} ${year}`;
+    footerYear.innerHTML = `&copy; ${year} CalendarApp. All rights reserved.`;
+
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const day = daysInPrevMonth - i;
+      const div = document.createElement("div");
+      div.classList.add("not-current-month");
+      div.innerHTML = `<strong>${day}</strong>`;
+      calendarDays.appendChild(div);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const div = document.createElement("div");
+      const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+      if (isToday) div.classList.add("today");
+      div.innerHTML = `<strong>${day}</strong>`;
+      calendarDays.appendChild(div);
+    }
+
+    const totalCells = calendarDays.children.length;
+    const remainingCells = 42 - totalCells;
+    for (let day = 1; day <= remainingCells; day++) {
+      const div = document.createElement("div");
+      div.classList.add("not-current-month");
+      div.innerHTML = `<strong>${day}</strong>`;
+      calendarDays.appendChild(div);
+    }
+
+    monthSelect.value = currentMonth;
+    yearSelect.value = currentYear;
+  }
+
+  monthSelect.addEventListener("change", () => {
+    currentMonth = parseInt(monthSelect.value);
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  yearSelect.addEventListener("change", () => {
+    currentYear = parseInt(yearSelect.value);
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  prevBtn.addEventListener("click", () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  populateDropdowns();
+  renderCalendar(currentMonth, currentYear);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
