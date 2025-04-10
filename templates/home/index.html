@@ -123,8 +123,26 @@
       div.innerHTML = `<strong>${day}</strong>`;
 
       div.addEventListener("click", () => {
-        window.location.href = `/service/${dateStr}/`;
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/service/";
+      
+        const csrf = document.createElement("input");
+        csrf.type = "hidden";
+        csrf.name = "csrfmiddlewaretoken";
+        csrf.value = '{{ csrf_token }}';  // Provided by Django template
+        form.appendChild(csrf);
+      
+        const dateInput = document.createElement("input");
+        dateInput.type = "hidden";
+        dateInput.name = "selected_date";
+        dateInput.value = dateStr;
+        form.appendChild(dateInput);
+      
+        document.body.appendChild(form);
+        form.submit();
       });
+      
 
       calendarDays.appendChild(div);
     }

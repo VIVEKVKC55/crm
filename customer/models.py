@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Customer(models.Model):
     name = models.CharField(max_length=100)
@@ -6,6 +7,9 @@ class Customer(models.Model):
     phone = models.CharField(max_length=20)
     address = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='customers_created')
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='customers_updated')
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
