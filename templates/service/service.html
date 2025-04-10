@@ -1,0 +1,52 @@
+<form method="POST">
+  {% csrf_token %}
+  <lable for="selected_date">Selected Date:</label>
+  <input type="date" name="selected_date" value="{{ selected_date }}">
+  <div class="time-slot-wrapper">
+    <label>Requested Time</label>
+    {% for radio in form.requested_time %}
+        <label class="time-slot-button">
+            {{ radio.tag }}
+            <span>{{ radio.choice_label }}</span>
+        </label>
+    {% endfor %}
+  </div>
+
+  {{ form.customer.label_tag }} {{ form.customer }}<br><br>
+  {{ form.service_type.label_tag }} {{ form.service_type }}<br><br>
+  {{ form.service_description.label_tag }} {{ form.service_description }}<br><br>
+
+  <button type="submit" name="submit_service">Submit</button>
+</form>
+<style>
+  .time-slot-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0;
+  }
+  
+  .time-slot-button {
+      padding: 10px 15px;
+      background: #fff;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.2s ease;
+      font-weight: 500;
+  }
+  
+  .time-slot-button input[type="radio"] {
+      display: none;
+  }
+  
+  .time-slot-button input[type="radio"]:checked + span {
+      background-color: #1e90ff;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      display: inline-block;
+  }
+  </style>
+  

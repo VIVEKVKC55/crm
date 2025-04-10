@@ -11,7 +11,7 @@ class ServiceRequest(models.Model):
     service_type = models.CharField(max_length=10, choices=SERVICE_TYPE_CHOICES)
     service_description = models.TextField()
     requested_date = models.DateField()
-    requested_time = models.TimeField()
+    requested_time = models.CharField(max_length=20)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
